@@ -1,0 +1,27 @@
+{
+  "name": "satanApp",
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "authors": [
+    "serhii"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "jquery": "~2.1.4",
+    "bootstrap": "~3.3.6"
+  },
+  "devDependencies": {
+    "gulp": "~3.9.0"
+  }
+}

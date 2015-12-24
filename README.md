@@ -1,7 +1,7 @@
 # SatanApp
 Perfect app
 
-### Installation
+### Installation COOL
 
 ```sh
 $ bower install

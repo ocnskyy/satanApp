@@ -23,6 +23,6 @@
     "angular-ui-router": "~0.2.15"
   },
   "devDependencies": {
-    "gulp": "~3.9.0"
+  	
   }
 }

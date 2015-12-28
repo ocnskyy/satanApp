@@ -1,11 +1,7 @@
-
+﻿
 	<div class="main-container container-fluid">
-		
-		
-		
-
 		<div class="header">
-			<h1>SOCIONIC TREE</h1>
+			<a href="#/hello" title=""><h1>SOCIONIC TREE</h1></a>
 		</div>
 		<div class="content row">
 			<div class="block col-md-12">
@@ -28,33 +24,9 @@
 				<div class="row">
 
 					<div class="col-md-4">
-						<div class="log-form reg-form animated logg" ng-show="regg">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Имя пользователя" ng-model="regData.login">
-							</div>
-							<div class="input-group">
-								<input type="password" class="form-control" placeholder="Пароль" ng-model="regData.password">
-							</div>
-							<button class="btn btn-default" ng-click="registration()">Регистрация</button>
-						</div>	
-					</div>
-
-					<div class="col-md-4">
 						<div class="row-button">
-							<button class="btn btn-default" id="reg-click" ng-click="regg = !regg">ПРИСОЕДИНИТЬСЯ</button>
-							<div id="log-click"><span ng-click="logg = !logg">Уже зарегестрированы?</span></div>
-						</div>
-					</div>
-
-					<div class="col-md-4">
-						<div class="reg-form animated regg" ng-show="logg">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Имя пользователя" ng-model="logData.login">
-							</div>
-							<div class="input-group">
-								<input type="password" class="form-control" placeholder="Пароль" ng-model="logData.password">
-							</div>
-							<button class="btn btn-default" ng-click="logIn()">Вход</button>
+							<button class="btn btn-default" id="reg-click" ng-click="goToRegistration()">ПРИСОЕДИНИТЬСЯ</button>
+							<div id="log-click"><span ng-click="goToLogin()">Уже зарегестрированы?</span></div>
 						</div>
 					</div>
 

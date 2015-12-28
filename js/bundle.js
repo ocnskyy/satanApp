@@ -1,78 +1,123 @@
- var satanApp = angular.module('satanApp', ['ui.router']);
-
 'use strict'
-satanApp.controller('MainController', ['$scope', '$http', function($scope, $http){
-	
-	// $scope.regg = false;
-	// $scope.logg = false;
-	console.log('its me');
+var satanApp = angular.module('satanApp', ['ui.router']);
 
+satanApp.factory('myService', function($http) {
+
+    var checkLogin = function(login) {
+    	return $http.post('http://grue.esy.es/pingpong.php', {"command": "CheckLogin","data": login})
+			.then(function(result) {
+            	return result.data;
+       		});
+    };
+
+    var getSoctypes = function() {
+    	return $http.post('http://grue.esy.es/pingpong.php', {"command": "GetSocTypes", "data": ""})
+    		.then(function(result) {
+    			return result.data;
+    		});
+    };
+
+    var registration = function(login, password, soctype) {
+    	var tmpObj = {
+    		'command': 'Registration',
+    		'data': {
+    			'login': login,
+    			'password': password,
+    			'soctype': soctype
+    		}
+    	};
+    	return $http.post('http://grue.esy.es/pingpong.php', tmpObj)
+    		.then(function(result) {
+    			return result.data;
+    		});
+    };
+
+    var login = function(login, password) {
+    	var tmpObj = {
+    		'command': 'LogIn',
+    		'data': {
+    			'login': login,
+    			'password': password
+    		}
+    	};
+    	return $http.post('http://grue.esy.es/pingpong.php', tmpObj)
+    		.then(function(result) {
+    			return result.data;
+    		});
+    };
+
+    return {checkLogin	: checkLogin,
+    		getSoctypes : getSoctypes,
+    		registration: registration,
+    		login 		: login};
+});
+
+satanApp.controller('MainController', ['$scope', '$http', '$state', function($scope, $http, $state){
+	console.log('Its MainController');
+
+	$scope.goToLogin 		= function() {$state.go('login');};
+	$scope.goToRegistration	= function() {$state.go('registration');};
+
+}]);
+satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', function($scope, $http, myService, $state){
+	console.log('Its LoginController');
 	$scope.regData = {};
+	$scope.socTypes = {};
 	$scope.logData = {};
-	$scope.boolTmp = false;
-	//$scope.tmpObj = {};
+	$scope.phpsesid = '';
+	$scope.tmp = 0;
+	var url = 'http://grue.esy.es/pingpong.php';
+
+	myService.getSoctypes().then(function(res) {
+		console.log('got soctypes');
+		$scope.socTypes = res;
+	});
+
+	// $scope.checkLogin = function(login) {
+	// 	var tmp;
+	// 	$http.post(url, {"command": "CheckLogin","data": login}, function(data, textStatus, xhr) {})
+	// 		.success(function(data) {
+	// 			if (data.data == 0) {
+	// 				console.log('имя свободно');
+	// 				tmp = 0;
+	// 				// console.log('here', $scope.tmp);
+	// 			}
+	// 			else {
+	// 				console.log('имя занято');
+	// 				tmp = 1;
+	// 				// console.log('here', $scope.tmp);
+	// 			}
+	// 		});
+	// 	return tmp;
+	// }
 
 	$scope.logIn = function() {
-		var tmpObj = {
-			"command": "LogIn",
-			"data": {
-				"login": $scope.logData.login,
-				"password": $scope.logData.password
-			}
-		};
-
-		console.log('this is what i wanna send', tmpObj);
-		$http.post('http://grue.esy.es/pingpong.php', tmpObj, function(data, textStatus, xhr) {
-			console.log('data', data);
-		})
-			.error(function(data) {
-		     	console.log('this is error', data);
-		    })
-		    .success(function(data) {
-		    	console.log('success', data);
-		    	data.code != '200' ? alert('Incorrect data!') : console.log('its OK');
-		    });
+		//console.log('this is what i wanna send', tmpObj);
+		myService.login($scope.logData.login, $scope.logData.password)
+		.then(function(res) {
+			console.log(res);
+			res.code == 200 ? $state.go('main') : alert(res.msg);
+		});
 	};
-
-	$scope.loginCheck = function() {
-		//login check
-		$http.post('http://grue.esy.es/pingpong.php', $scope.regData.login, function(data){})
-			.success(function(data) {
-				console.log('login check result', data.code);
-				data.code != '200' ? $scope.boolTmp = false : $scope.boolTmp = true;
-			});
-	}
 
 	$scope.registration = function() {
-		$scope.loginCheck();
-		console.log('boolTmp', $scope.boolTmp, typeof $scope.boolTmp);
-		if ($scope.boolTmp != false)	{
-			console.log('login check', $scope.boolTmp);
-			var tmpObj = {
-				"command": "Registration",
-				"data": {
-					"login": $scope.regData.login,
-					"password": $scope.regData.password
+		if ($scope.regData.password1 == $scope.regData.password2) {
+			myService.checkLogin($scope.regData.login).then(function(res) {
+				if (res.data == 0) {
+					//console.log('this is what i wanna send', tmpObj);
+					myService.registration($scope.regData.login, $scope.regData.password1, $scope.regData.soctype)
+					.then(function(res) {
+						console.log(res);
+						res.code == 200 ? $state.go('login') : alert(res.msg);
+					});
 				}
-			};
-
-			console.log('this is what i wanna send', tmpObj);
-			$http.post('http://grue.esy.es/pingpong.php', tmpObj, function(data, textStatus, xhr) {
-				console.log('data', data);
-			})
-				.error(function(data) {
-			     	console.log('this is error', data);
-			    })
-			    .success(function(data) {
-			    	console.log('success', data);
-			    	data.code != '200' ? alert('Incorrect data in registration!') : console.log('its OK');
-			    });
+				else
+					alert('Такой логин уже существует!');
+			});
 		}
 		else
-			alert('This login is already in use!');
+			alert('Пароли не совпадют!');
 	};
-
-
 }]);
 satanApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
 	
@@ -84,32 +129,23 @@ satanApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) 
 			url: '/home',
 			templateUrl: 'templates/hello.html'
 		})
+		.state('login', {
+			url: '/login',
+			templateUrl: 'templates/login.html',
+			controller: 'LoginController'
+		})
+		.state('registration', {
+			url: '/registration',
+			templateUrl: 'templates/registration.html',
+			controller: 'LoginController'
+		})
+		.state('main', {
+			url: '/main',
+			templateUrl: 'templates/main.html',
+			controller: 'MainController'
+		})
 		.state('test', {
 			url: '/test',
 			templateUrl: 'templates/test.html'
 		});
-	// $stateProvider
-	//     .state('', {
-	//     	url: '/home',
-	//       	templateUrl: "templates/hello.html"
-	//     })
-	//     .state('home', {
-	//       	url: '/home',
-	//       	templateUrl: "templates/hello.html"
-	//      	//controller: 'MainController'
-	//     });
-
-
-	// $routeProvider
-	// 	.when('/', {
-	// 		templateUrl : 'templates/hello.html',
-	// 		controller 	: 'MainController' 
-	// 	})
-	// 	.when('/home', {
-	// 		templateUrl : 'templates/hello.html',
-	// 		controller 	: 'MainController' 
-	// 	})
-	// 	.otherwise({redirectTo: '/home'});
-
-	// 	$locationProvider.html5Mode(true);
 });

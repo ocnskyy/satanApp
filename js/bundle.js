@@ -1,17 +1,33 @@
 'use strict'
 var satanApp = angular.module('satanApp', ['ui.router']);
 
+satanApp.service('shareId', function() {
+    var stringValue = '';    
+    return {
+        getString: function() {
+            return stringValue;
+        },
+        setString: function(value) {
+            stringValue = value;
+        },
+        getRandomImage: function() {
+        	return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';
+        }
+    }
+});
 satanApp.factory('myService', function($http) {
+    //var url = 'http://grue.esy.es/pingpong.php';
+    var url = "http://grup/backend/pingpong.php"; 
 
     var checkLogin = function(login) {
-    	return $http.post('http://grue.esy.es/pingpong.php', {"command": "CheckLogin","data": login})
+    	return $http.post(url, {"command": "CheckLogin","data": login})
 			.then(function(result) {
             	return result.data;
        		});
     };
 
     var getSoctypes = function() {
-    	return $http.post('http://grue.esy.es/pingpong.php', {"command": "GetSocTypes", "data": ""})
+    	return $http.post(url, {"command": "GetSocTypes", "data": ""})
     		.then(function(result) {
     			return result.data;
     		});
@@ -26,7 +42,7 @@ satanApp.factory('myService', function($http) {
     			'soctype': soctype
     		}
     	};
-    	return $http.post('http://grue.esy.es/pingpong.php', tmpObj)
+    	return $http.post(url, tmpObj)
     		.then(function(result) {
     			return result.data;
     		});
@@ -40,7 +56,7 @@ satanApp.factory('myService', function($http) {
     			'password': password
     		}
     	};
-    	return $http.post('http://grue.esy.es/pingpong.php', tmpObj)
+    	return $http.post(url, tmpObj)
     		.then(function(result) {
     			return result.data;
     		});
@@ -49,22 +65,29 @@ satanApp.factory('myService', function($http) {
     return {checkLogin	: checkLogin,
     		getSoctypes : getSoctypes,
     		registration: registration,
-    		login 		: login};
+    		login 		: login,
+            superId     : ''};
 });
 
-satanApp.controller('MainController', ['$scope', '$http', '$state', function($scope, $http, $state){
+satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService', 'shareId',function($scope, $http, $state, myService, shareId){
 	console.log('Its MainController');
+	$scope.superId = 'c97618cdb5adcb6f00de7fc9bd5faa8c'; //shareId.getString();
+	$scope.superId == '' ? $state.go('home') : console.log('got phpseid', $scope.superId);
+	$scope.helloImage = shareId.getRandomImage();
+	$scope.goHome = function() {$state.go('home');};
 
+	
+}]);
+satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', 'shareId', function($scope, $http, myService, $state, shareId){
+	console.log('Its LoginController');
 	$scope.goToLogin 		= function() {$state.go('login');};
 	$scope.goToRegistration	= function() {$state.go('registration');};
+	$scope.goHome = function() {$state.go('home');};
+	$scope.helloImage = shareId.getRandomImage();
 
-}]);
-satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', function($scope, $http, myService, $state){
-	console.log('Its LoginController');
 	$scope.regData = {};
 	$scope.socTypes = {};
 	$scope.logData = {};
-	$scope.phpsesid = '';
 	$scope.tmp = 0;
 	var url = 'http://grue.esy.es/pingpong.php';
 
@@ -73,30 +96,17 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 		$scope.socTypes = res;
 	});
 
-	// $scope.checkLogin = function(login) {
-	// 	var tmp;
-	// 	$http.post(url, {"command": "CheckLogin","data": login}, function(data, textStatus, xhr) {})
-	// 		.success(function(data) {
-	// 			if (data.data == 0) {
-	// 				console.log('имя свободно');
-	// 				tmp = 0;
-	// 				// console.log('here', $scope.tmp);
-	// 			}
-	// 			else {
-	// 				console.log('имя занято');
-	// 				tmp = 1;
-	// 				// console.log('here', $scope.tmp);
-	// 			}
-	// 		});
-	// 	return tmp;
-	// }
-
 	$scope.logIn = function() {
 		//console.log('this is what i wanna send', tmpObj);
 		myService.login($scope.logData.login, $scope.logData.password)
 		.then(function(res) {
 			console.log(res);
-			res.code == 200 ? $state.go('main') : alert(res.msg);
+			if (res.code == 200) {
+				shareId.setString(res.data);
+				$state.go('main');
+			}
+			else
+				alert(res.msg);
 		});
 	};
 
@@ -127,25 +137,25 @@ satanApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) 
 	$stateProvider
 		.state('home', {
 			url: '/home',
-			templateUrl: 'templates/hello.html'
+			templateUrl: '../app/templates/hello.html'
 		})
 		.state('login', {
 			url: '/login',
-			templateUrl: 'templates/login.html',
+			templateUrl: '../app/templates/login.html',
 			controller: 'LoginController'
 		})
 		.state('registration', {
 			url: '/registration',
-			templateUrl: 'templates/registration.html',
+			templateUrl: '../app/templates/registration.html',
 			controller: 'LoginController'
 		})
 		.state('main', {
 			url: '/main',
-			templateUrl: 'templates/main.html',
+			templateUrl: '../app/templates/main.html',
 			controller: 'MainController'
 		})
 		.state('test', {
 			url: '/test',
-			templateUrl: 'templates/test.html'
+			templateUrl: '../app/templates/test.html'
 		});
 });

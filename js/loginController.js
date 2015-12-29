@@ -1,9 +1,13 @@
-satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', function($scope, $http, myService, $state){
+satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', 'shareId', function($scope, $http, myService, $state, shareId){
 	console.log('Its LoginController');
+	$scope.goToLogin 		= function() {$state.go('login');};
+	$scope.goToRegistration	= function() {$state.go('registration');};
+	$scope.goHome = function() {$state.go('home');};
+	$scope.helloImage = shareId.getRandomImage();
+
 	$scope.regData = {};
 	$scope.socTypes = {};
 	$scope.logData = {};
-	$scope.phpsesid = '';
 	$scope.tmp = 0;
 	var url = 'http://grue.esy.es/pingpong.php';
 
@@ -12,30 +16,17 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 		$scope.socTypes = res;
 	});
 
-	// $scope.checkLogin = function(login) {
-	// 	var tmp;
-	// 	$http.post(url, {"command": "CheckLogin","data": login}, function(data, textStatus, xhr) {})
-	// 		.success(function(data) {
-	// 			if (data.data == 0) {
-	// 				console.log('имя свободно');
-	// 				tmp = 0;
-	// 				// console.log('here', $scope.tmp);
-	// 			}
-	// 			else {
-	// 				console.log('имя занято');
-	// 				tmp = 1;
-	// 				// console.log('here', $scope.tmp);
-	// 			}
-	// 		});
-	// 	return tmp;
-	// }
-
 	$scope.logIn = function() {
 		//console.log('this is what i wanna send', tmpObj);
 		myService.login($scope.logData.login, $scope.logData.password)
 		.then(function(res) {
 			console.log(res);
-			res.code == 200 ? $state.go('main') : alert(res.msg);
+			if (res.code == 200) {
+				shareId.setString(res.data);
+				$state.go('main');
+			}
+			else
+				alert(res.msg);
 		});
 	};
 

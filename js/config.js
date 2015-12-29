@@ -6,25 +6,25 @@ satanApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) 
 	$stateProvider
 		.state('home', {
 			url: '/home',
-			templateUrl: 'templates/hello.html'
+			templateUrl: '../app/templates/hello.html'
 		})
 		.state('login', {
 			url: '/login',
-			templateUrl: 'templates/login.html',
+			templateUrl: '../app/templates/login.html',
 			controller: 'LoginController'
 		})
 		.state('registration', {
 			url: '/registration',
-			templateUrl: 'templates/registration.html',
+			templateUrl: '../app/templates/registration.html',
 			controller: 'LoginController'
 		})
 		.state('main', {
 			url: '/main',
-			templateUrl: 'templates/main.html',
+			templateUrl: '../app/templates/main.html',
 			controller: 'MainController'
 		})
 		.state('test', {
 			url: '/test',
-			templateUrl: 'templates/test.html'
+			templateUrl: '../app/templates/test.html'
 		});
 });

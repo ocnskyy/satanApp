@@ -1,14 +1,16 @@
 ﻿satanApp.factory('myService', function($http) {
+    //var url = 'http://grue.esy.es/pingpong.php';
+    var url = "http://grup/backend/pingpong.php"; 
 
     var checkLogin = function(login) {
-    	return $http.post('http://grue.esy.es/pingpong.php', {"command": "CheckLogin","data": login})
+    	return $http.post(url, {"command": "CheckLogin","data": login})
 			.then(function(result) {
             	return result.data;
        		});
     };
 
     var getSoctypes = function() {
-    	return $http.post('http://grue.esy.es/pingpong.php', {"command": "GetSocTypes", "data": ""})
+    	return $http.post(url, {"command": "GetSocTypes", "data": ""})
     		.then(function(result) {
     			return result.data;
     		});
@@ -23,7 +25,7 @@
     			'soctype': soctype
     		}
     	};
-    	return $http.post('http://grue.esy.es/pingpong.php', tmpObj)
+    	return $http.post(url, tmpObj)
     		.then(function(result) {
     			return result.data;
     		});
@@ -37,7 +39,7 @@
     			'password': password
     		}
     	};
-    	return $http.post('http://grue.esy.es/pingpong.php', tmpObj)
+    	return $http.post(url, tmpObj)
     		.then(function(result) {
     			return result.data;
     		});
@@ -46,5 +48,6 @@
     return {checkLogin	: checkLogin,
     		getSoctypes : getSoctypes,
     		registration: registration,
-    		login 		: login};
+    		login 		: login,
+            superId     : ''};
 });

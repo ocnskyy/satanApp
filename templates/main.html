@@ -8,7 +8,7 @@
 			<div class="block col-md-12">
 				<div class="row main-row" >
 					<div class="col-md-4">
-						<input type="text" placeholder="Имя друга" class="form-control" ng-model="friendData.login">
+						<input type="text" placeholder="Имя друга" class="form-control" ng-model="friendData.login" style="font-family: none;">
 					</div>
 					<div class="col-md-4">
 						<select ng-model="friendData.soctype" ng-options="type.id as type.name for type in socTypes.data" class="form-control">
@@ -22,9 +22,9 @@
 				<hr style=" border: 0;height: 1px;background: #333;">
 			</div>
 
-			<div class="block col-md-12">
+			<div class="block col-md-12" id="description">
 				<div class="row main-row">
-					<div class="col-md-3">
+					<div class="col-md-3" style="font-family: none;">
 						Логин
 					</div>
 					<div class="col-md-4">
@@ -33,11 +33,36 @@
 					<div class="col-md-4">
 						Отношение
 					</div>
+					<div class="col-md-1" style="display: none;">
+						<button class="btn btn-default"><b>-</b></button>
+					</div>
+				</div>
+				<div class="col-md-12"><p style="margin; auto;margin-top: 25px;">{{message}}</p></div>
+				<hr style=" border: 0;height: 1px;background: #333;">
+			</div>
+			
+			<!--GET THE ROCK BEGIN-->
+			<div class="block col-md-12" ng-repeat="friend in friendArray">
+				<div class="row main-row">
+					<div class="col-md-3" style="font-family: none !important;">
+						{{friend.name}}
+					</div>
+					<div class="col-md-4">
+						{{friend.soctype}}
+					</div>
+					<div class="col-md-4">
+						{{friend.relation}}
+					</div>
 					<div class="col-md-1">
-						<button class="btn btn-default">-</button>
+						<button class="btn btn-default" style="width: 100px;" ng-click="deleteFriend(friend.name)"><b>-</b></button>
 					</div>
 				</div>
 				<hr style=" border: 0;height: 1px;background: #333;">
+			</div>
+			<!--GET THE ROCK END-->
+
+			<div class="col-md-12">
+				<button class="btn btn-default" ng-click="logOut()" style="margin-top: 25px;">ВЫХОД</button>
 			</div>
 
 		</div>

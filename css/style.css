@@ -3,6 +3,12 @@
 	src: url(../font/indie-flower.woff2);
 }
 
+@media all and (max-width: 991px) {
+	#description {
+		display: none;
+	}
+}
+
 a {
 	color: #000;
 	text-decoration: none;

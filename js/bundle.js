@@ -54,6 +54,7 @@ satanApp.factory('myService', function($http) {
             'data': '',
             'phpsesid': superid
         };
+        console.log('iw anna send', tmpObj);
         return $http.post(url, tmpObj)
             .then(function(result) {
                 return result.data;
@@ -75,6 +76,18 @@ satanApp.factory('myService', function($http) {
             });
     };
 
+    var deleteFriend = function(superid, name) {
+        var tmpObj = {
+            'command': 'DeleteFriend',
+            'data': name,
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
     var logOut = function(superid) {
         var tmpObj = {
             'command': 'LogOut',
@@ -87,6 +100,10 @@ satanApp.factory('myService', function($http) {
             });
     };
 
+    var pushFriend = function(friend, array) {
+        array.push(friend);
+    };
+
     var stringValue = '';    
     return {checkLogin	: checkLogin,
     		getSoctypes : getSoctypes,
@@ -95,10 +112,12 @@ satanApp.factory('myService', function($http) {
             superId     : '',
             getFriends  : getFriends,
             addFriend   : addFriend,
-            getString: function() {return stringValue;},
-            setString: function(value) {stringValue = value;},
+            getString   : function() {return stringValue;},
+            setString   : function(value) {stringValue = value;},
             getRandomImage: function() {return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';},
-            logOut : logOut
+            logOut      : logOut,
+            pushFriend  : pushFriend,
+            deleteFriend: deleteFriend
         };
 });
 
@@ -111,6 +130,7 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 	$scope.friendData = {};
 	$scope.friendArray = [];
 	$scope.socTypes = {};
+	$scope.message = '';
 	$scope.goHome = function() {$state.go('home');};
 
 	myService.getSoctypes().then(function(res) {
@@ -120,21 +140,23 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 
 	myService.getFriends($scope.superId).then(function (res) {
 		console.log('got friends', res.data);
-
+		$scope.friendArray = res.data;
+		$scope.friendArray.length == 0 ? $scope.message = "Вы пока не добавили ни одного друга" : console.log('друзья есть');
+		console.log('array friends', $scope.friendArray);
 	});
 
-	$scope.getFriends = function() {
-		myService.getFriends($scope.superId)
-		.then(function(res) {
-			console.log(res);
-			if (res.code == 200) {
-				console.log('friend has added');
-			}
-			else
-				alert(res.msg);
+	// $scope.getFriends = function() {
+	// 	myService.getFriends($scope.superId)
+	// 	.then(function(res) {
+	// 		console.log(res);
+	// 		if (res.code == 200) {
+	// 			console.log('friend has added');
+	// 		}
+	// 		else
+	// 			alert(res.msg);
 
-		});
-	};
+	// 	});
+	// };
 
 	$scope.addFriend = function() {
 		console.log($scope.superId, $scope.friendData.login, $scope.friendData.soctype);
@@ -143,18 +165,30 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 			console.log(res);
 			if (res.code == 200) {
 				console.log('friend has added');
+				$scope.friendData.login = '';
+				$scope.friendData.soctype = '';
+				myService.getFriends($scope.superId).then(function (res) {
+					console.log('got friends', res.data);
+					$scope.friendArray = res.data;
+					console.log('array friends', $scope.friendArray);
+				});
 			}
 			else
 				alert(res.msg);
 		});
 	};
 
-	$scope.deleteFrind = function() {
-		myService.deleteFriend($scope.superId )
+	$scope.deleteFriend = function(name) {
+		myService.deleteFriend($scope.superId, name)
 		.then(function(res) {
 			console.log(res);
 			if (res.code == 200) {
-				console.log('friend has added');
+				console.log('friend has deleted');
+				myService.getFriends($scope.superId).then(function (res) {
+					console.log('got friends', res.data);
+					$scope.friendArray = res.data;
+					console.log('array friends', $scope.friendArray);
+				});
 			}
 			else
 				alert(res.msg);

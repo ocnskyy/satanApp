@@ -51,6 +51,7 @@
             'data': '',
             'phpsesid': superid
         };
+        console.log('iw anna send', tmpObj);
         return $http.post(url, tmpObj)
             .then(function(result) {
                 return result.data;
@@ -72,6 +73,18 @@
             });
     };
 
+    var deleteFriend = function(superid, name) {
+        var tmpObj = {
+            'command': 'DeleteFriend',
+            'data': name,
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
     var logOut = function(superid) {
         var tmpObj = {
             'command': 'LogOut',
@@ -84,6 +97,10 @@
             });
     };
 
+    var pushFriend = function(friend, array) {
+        array.push(friend);
+    };
+
     var stringValue = '';    
     return {checkLogin	: checkLogin,
     		getSoctypes : getSoctypes,
@@ -92,9 +109,11 @@
             superId     : '',
             getFriends  : getFriends,
             addFriend   : addFriend,
-            getString: function() {return stringValue;},
-            setString: function(value) {stringValue = value;},
+            getString   : function() {return stringValue;},
+            setString   : function(value) {stringValue = value;},
             getRandomImage: function() {return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';},
-            logOut : logOut
+            logOut      : logOut,
+            pushFriend  : pushFriend,
+            deleteFriend: deleteFriend
         };
 });

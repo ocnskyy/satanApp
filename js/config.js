@@ -6,7 +6,8 @@ satanApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) 
 	$stateProvider
 		.state('home', {
 			url: '/home',
-			templateUrl: '../app/templates/hello.html'
+			templateUrl: '../app/templates/hello.html',
+			controller: 'LoginController'
 		})
 		.state('login', {
 			url: '/login',

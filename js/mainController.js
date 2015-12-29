@@ -1,6 +1,7 @@
 satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',function($scope, $http, $state, myService){
 	console.log('Its MainController');
-	$scope.superId = 'c97618cdb5adcb6f00de7fc9bd5faa8c'; //myService.getString();
+	//$scope.superId = 'c97618cdb5adcb6f00de7fc9bd5faa8c'; 
+	$scope.superId = myService.getString();
 	$scope.superId == '' ? $state.go('home') : console.log('got phpseid', $scope.superId);
 	$scope.helloImage = myService.getRandomImage();
 	$scope.friendData = {};
@@ -11,6 +12,11 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 	myService.getSoctypes().then(function(res) {
 		console.log('got soctypes');
 		$scope.socTypes = res;
+	});
+
+	myService.getFriends($scope.superId).then(function (res) {
+		console.log('got friends', res.data);
+
 	});
 
 	$scope.getFriends = function() {

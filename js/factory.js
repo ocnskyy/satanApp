@@ -9,6 +9,18 @@
        		});
     };
 
+    var info = function(superid) {
+        var tmpObj = {
+            'command': 'Info',
+            'data': '',
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
     var getSoctypes = function() {
     	return $http.post(url, {"command": "GetSocTypes", "data": ""})
     		.then(function(result) {
@@ -114,6 +126,7 @@
             getRandomImage: function() {return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';},
             logOut      : logOut,
             pushFriend  : pushFriend,
-            deleteFriend: deleteFriend
+            deleteFriend: deleteFriend,
+            info        : info
         };
 });

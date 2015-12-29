@@ -4,7 +4,26 @@
 			<a ng-click="goHome()" title=""><h1>SOCIONIC TREE</h1></a>
 		</div>
 		<div class="content row">
-		
+			
+			<div class="block col-md-12">
+				<div class="row main-row">
+					<div class="col-md-3" style="font-family: none;">
+						Вы:
+					</div>
+					<div class="col-md-4" style="font-family: none;">
+						{{infoData.login}}
+					</div>
+					<div class="col-md-4">
+						{{infoData.soctype}}
+					</div>
+					<div class="col-md-1" style="display: none;">
+						<button class="btn btn-default"><b>-</b></button>
+					</div>
+				</div>
+				<p style="margin; auto;margin-top: 25px;">{{message}}</p>
+				<hr style=" border: 0;height: 1px;background: #333;">
+			</div>
+
 			<div class="block col-md-12">
 				<div class="row main-row" >
 					<div class="col-md-4">
@@ -37,7 +56,7 @@
 						<button class="btn btn-default"><b>-</b></button>
 					</div>
 				</div>
-				<div class="col-md-12"><p style="margin; auto;margin-top: 25px;">{{message}}</p></div>
+				<p style="margin; auto;margin-top: 25px;">{{message}}</p>
 				<hr style=" border: 0;height: 1px;background: #333;">
 			</div>
 			

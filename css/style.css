@@ -193,3 +193,7 @@ button: focus {
 	margin-left: 25px;
 	margin-right: 25px;
 }
+
+.odd > div {
+	background-color: #E6F3FE;
+}

@@ -12,6 +12,18 @@ satanApp.factory('myService', function($http) {
        		});
     };
 
+    var info = function(superid) {
+        var tmpObj = {
+            'command': 'Info',
+            'data': '',
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
     var getSoctypes = function() {
     	return $http.post(url, {"command": "GetSocTypes", "data": ""})
     		.then(function(result) {
@@ -117,7 +129,8 @@ satanApp.factory('myService', function($http) {
             getRandomImage: function() {return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';},
             logOut      : logOut,
             pushFriend  : pushFriend,
-            deleteFriend: deleteFriend
+            deleteFriend: deleteFriend,
+            info        : info
         };
 });
 
@@ -128,6 +141,7 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 	$scope.superId == '' ? $state.go('home') : console.log('got phpseid', $scope.superId);
 	$scope.helloImage = myService.getRandomImage();
 	$scope.friendData = {};
+	$scope.infoData = {};
 	$scope.friendArray = [];
 	$scope.socTypes = {};
 	$scope.message = '';
@@ -143,6 +157,11 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 		$scope.friendArray = res.data;
 		$scope.friendArray.length == 0 ? $scope.message = "Вы пока не добавили ни одного друга" : console.log('друзья есть');
 		console.log('array friends', $scope.friendArray);
+	});
+
+	myService.info($scope.superId).then(function (res) {
+		console.log('got info', res.data);
+		$scope.infoData = res.data;
 	});
 
 	// $scope.getFriends = function() {
@@ -167,6 +186,7 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 				console.log('friend has added');
 				$scope.friendData.login = '';
 				$scope.friendData.soctype = '';
+				$scope.message = '';
 				myService.getFriends($scope.superId).then(function (res) {
 					console.log('got friends', res.data);
 					$scope.friendArray = res.data;
@@ -187,6 +207,7 @@ satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',
 				myService.getFriends($scope.superId).then(function (res) {
 					console.log('got friends', res.data);
 					$scope.friendArray = res.data;
+					$scope.friendArray.length == 0 ? $scope.message = "Вы пока не добавили ни одного друга" : console.log('друзья есть');
 					console.log('array friends', $scope.friendArray);
 				});
 			}

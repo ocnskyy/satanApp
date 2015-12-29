@@ -166,3 +166,24 @@ button: focus {
 .registration .dropdown-menu {
 	width: 100%;
 }
+
+/*----MAIN PAGE-----*/
+.main-row {
+	margin-top: 25px;
+	text-align: center;
+	width: 80%;
+	margin: auto;
+}
+
+.main-row > div {
+	margin-top: 20px;
+}
+
+.main-row button {
+	/*width: 100px;*/
+}
+
+.buttons button {
+	margin-left: 25px;
+	margin-right: 25px;
+}

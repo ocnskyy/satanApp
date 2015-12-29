@@ -45,9 +45,56 @@
     		});
     };
 
+    var getFriends = function(superid) {
+        var tmpObj = {
+            'command': 'GetFriends',
+            'data': '',
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
+    var addFriend = function(superid, name, soctype) {
+        var tmpObj = {
+            'command': 'AddFriend',
+            'data': {
+                'name': name,
+                'soctype': soctype
+            },
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
+    var logOut = function(superid) {
+        var tmpObj = {
+            'command': 'LogOut',
+            'data': '',
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
+    var stringValue = '';    
     return {checkLogin	: checkLogin,
     		getSoctypes : getSoctypes,
     		registration: registration,
     		login 		: login,
-            superId     : ''};
+            superId     : '',
+            getFriends  : getFriends,
+            addFriend   : addFriend,
+            getString: function() {return stringValue;},
+            setString: function(value) {stringValue = value;},
+            getRandomImage: function() {return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';},
+            logOut : logOut
+        };
 });

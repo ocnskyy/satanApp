@@ -1,9 +1,9 @@
-satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', 'shareId', function($scope, $http, myService, $state, shareId){
+satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', function($scope, $http, myService, $state){
 	console.log('Its LoginController');
 	$scope.goToLogin 		= function() {$state.go('login');};
 	$scope.goToRegistration	= function() {$state.go('registration');};
 	$scope.goHome = function() {$state.go('home');};
-	$scope.helloImage = shareId.getRandomImage();
+	$scope.helloImage = myService.getRandomImage();
 
 	$scope.regData = {};
 	$scope.socTypes = {};
@@ -22,7 +22,7 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 		.then(function(res) {
 			console.log(res);
 			if (res.code == 200) {
-				shareId.setString(res.data);
+				myService.setString(res.data);
 				$state.go('main');
 			}
 			else

@@ -1,20 +1,6 @@
 'use strict'
 var satanApp = angular.module('satanApp', ['ui.router']);
 
-satanApp.service('shareId', function() {
-    var stringValue = '';    
-    return {
-        getString: function() {
-            return stringValue;
-        },
-        setString: function(value) {
-            stringValue = value;
-        },
-        getRandomImage: function() {
-        	return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';
-        }
-    }
-});
 satanApp.factory('myService', function($http) {
     //var url = 'http://grue.esy.es/pingpong.php';
     var url = "http://grup/backend/pingpong.php"; 
@@ -62,28 +48,132 @@ satanApp.factory('myService', function($http) {
     		});
     };
 
+    var getFriends = function(superid) {
+        var tmpObj = {
+            'command': 'GetFriends',
+            'data': '',
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
+    var addFriend = function(superid, name, soctype) {
+        var tmpObj = {
+            'command': 'AddFriend',
+            'data': {
+                'name': name,
+                'soctype': soctype
+            },
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
+    var logOut = function(superid) {
+        var tmpObj = {
+            'command': 'LogOut',
+            'data': '',
+            'phpsesid': superid
+        };
+        return $http.post(url, tmpObj)
+            .then(function(result) {
+                return result.data;
+            });
+    };
+
+    var stringValue = '';    
     return {checkLogin	: checkLogin,
     		getSoctypes : getSoctypes,
     		registration: registration,
     		login 		: login,
-            superId     : ''};
+            superId     : '',
+            getFriends  : getFriends,
+            addFriend   : addFriend,
+            getString: function() {return stringValue;},
+            setString: function(value) {stringValue = value;},
+            getRandomImage: function() {return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';},
+            logOut : logOut
+        };
 });
 
-satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService', 'shareId',function($scope, $http, $state, myService, shareId){
+satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',function($scope, $http, $state, myService){
 	console.log('Its MainController');
-	$scope.superId = 'c97618cdb5adcb6f00de7fc9bd5faa8c'; //shareId.getString();
+	$scope.superId = 'c97618cdb5adcb6f00de7fc9bd5faa8c'; //myService.getString();
 	$scope.superId == '' ? $state.go('home') : console.log('got phpseid', $scope.superId);
-	$scope.helloImage = shareId.getRandomImage();
+	$scope.helloImage = myService.getRandomImage();
+	$scope.friendData = {};
+	$scope.friendArray = [];
+	$scope.socTypes = {};
 	$scope.goHome = function() {$state.go('home');};
 
-	
+	myService.getSoctypes().then(function(res) {
+		console.log('got soctypes');
+		$scope.socTypes = res;
+	});
+
+	$scope.getFriends = function() {
+		myService.getFriends($scope.superId)
+		.then(function(res) {
+			console.log(res);
+			if (res.code == 200) {
+				console.log('friend has added');
+			}
+			else
+				alert(res.msg);
+
+		});
+	};
+
+	$scope.addFriend = function() {
+		console.log($scope.superId, $scope.friendData.login, $scope.friendData.soctype);
+		myService.addFriend($scope.superId, $scope.friendData.login, $scope.friendData.soctype)
+		.then(function(res) {
+			console.log(res);
+			if (res.code == 200) {
+				console.log('friend has added');
+			}
+			else
+				alert(res.msg);
+		});
+	};
+
+	$scope.deleteFrind = function() {
+		myService.deleteFriend($scope.superId )
+		.then(function(res) {
+			console.log(res);
+			if (res.code == 200) {
+				console.log('friend has added');
+			}
+			else
+				alert(res.msg);
+		});
+	};
+
+	$scope.logOut = function() {
+		myService.logOut($scope.superId)
+		.then(function(res) {
+			console.log(res);
+			if (res.code == 200) {
+				myService.setString('');
+				$state.go('login');
+			}
+			else
+				alert(res.msg);
+		});
+	};
 }]);
-satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', 'shareId', function($scope, $http, myService, $state, shareId){
+satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state', function($scope, $http, myService, $state){
 	console.log('Its LoginController');
 	$scope.goToLogin 		= function() {$state.go('login');};
 	$scope.goToRegistration	= function() {$state.go('registration');};
 	$scope.goHome = function() {$state.go('home');};
-	$scope.helloImage = shareId.getRandomImage();
+	$scope.helloImage = myService.getRandomImage();
 
 	$scope.regData = {};
 	$scope.socTypes = {};
@@ -102,7 +192,7 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 		.then(function(res) {
 			console.log(res);
 			if (res.code == 200) {
-				shareId.setString(res.data);
+				myService.setString(res.data);
 				$state.go('main');
 			}
 			else

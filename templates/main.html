@@ -4,18 +4,42 @@
 			<a ng-click="goHome()" title=""><h1>SOCIONIC TREE</h1></a>
 		</div>
 		<div class="content row">
+		
 			<div class="block col-md-12">
-				<div class="row">
-					<div class="col-md-12 header-image">
-						<img ng-src="{{helloImage}}" alt="sorry" class="img-responsive">
+				<div class="row main-row" >
+					<div class="col-md-4">
+						<input type="text" placeholder="Имя друга" class="form-control" ng-model="friendData.login">
 					</div>
-	
+					<div class="col-md-4">
+						<select ng-model="friendData.soctype" ng-options="type.id as type.name for type in socTypes.data" class="form-control">
+							<option value="" disabled selected>Социотип</option>
+						</select>
+					</div>
+					<div class="col-md-4">
+						<button class="btn btn-default" ng-click="addFriend()">Добавить друга</button>
+					</div>
 				</div>
+				<hr style=" border: 0;height: 1px;background: #333;">
 			</div>
-			
-			<div class="col-md-12">
 
+			<div class="block col-md-12">
+				<div class="row main-row">
+					<div class="col-md-3">
+						Логин
+					</div>
+					<div class="col-md-4">
+						Социотип
+					</div>
+					<div class="col-md-4">
+						Отношение
+					</div>
+					<div class="col-md-1">
+						<button class="btn btn-default">-</button>
+					</div>
+				</div>
+				<hr style=" border: 0;height: 1px;background: #333;">
 			</div>
+
 		</div>
 	</div>
 

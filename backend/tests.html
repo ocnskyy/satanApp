@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Project 666</title>
+        <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8">
+        <meta name="description" content="{?}">
+        <meta name="keywords" content="{?}">
+        <link rel="stylesheet" href="CSS/bootstrap.min.css" type="text/css">
+        <link rel="stylesheet" href="CSS/bootstrap-theme.min.css" type="text/css">
+        <script type="text/javascript" src="Scripts/jquery-2.1.4.min.js"></script>
+        <script type="text/javascript" src="Scripts/jquery.cookie.js"></script>
+        <script type="text/javascript" src="Scripts/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            
+            //var g_TargetURL = "http://grue.esy.es/pingpong.php";
+            var g_TargetURL = "pingpong.php";
+            
+            function SendRequest(Command, Data, Callback) {
+                src = "";
+				PHPSESID = $("#phpsesid").val();
+                if (PHPSESID == '')
+                    src = JSON.stringify({command: Command, data: Data});
+                else
+                    src = JSON.stringify({command: Command, phpsesid: PHPSESID, data: Data});
+                $.ajax({
+                    type: "POST",
+                    url: g_TargetURL,
+                    data: src,
+                    success: Callback,
+                    async: true,
+                    crossDomain: true
+                }).fail(function(){
+                    $("#res").val("FAILED");
+                });
+            }
+            
+            function SendCustomRequest() {
+                s = $("#data").val();
+				s = JSON.parse(s);
+				cmd = $("#cmd").val();
+				PHPSESID = $("#phpsesid").val();
+				if (cmd == "LogIn") {
+					SendRequest(cmd, s, function(data){
+						obj = JSON.parse(data);
+						$("#res").val("Code: " + obj.code + "\r\nMessage: " + obj.msg + "\r\n\r\n--------------All Data----------------\r\n" + data);
+						if (obj.code == 200) {
+							PHPSESID = obj.data;
+							$("#phpsesid").val(obj.data);
+						}
+					});					
+				}
+				else{
+					SendRequest($("#cmd").val(), s, function(data){
+						obj = JSON.parse(data);
+						$("#res").val("Code: " + obj.code + "\r\nMessage: " + obj.msg + "\r\n\r\n--------------All Data----------------\r\n" + data);
+					});
+				}
+            }
+            
+            function LogIn() {
+                SendRequest("LogIn", {"login": "Stoneface", "password": "Stoneface"}, function(data){
+                    //$("#res").val(data);
+                    obj = JSON.parse(data);
+                    $("#res").val("Code: " + obj.code + "\r\nMessage: " + obj.msg + "\r\nPHPSESID: " + obj.data);
+                    if (obj.code==200)
+                        $("#phpsesid").val(obj.data);
+                });
+            }
+            
+            function GetFriends(){
+                SendRequest("GetFriends", "", function(data){
+                    //$("#res").val(data);
+                    obj = JSON.parse(data);
+                    t = "Code: " + obj.code + "\r\nMessage: " + obj.msg + "\r\n";
+                    if (obj.code != 200){
+                        $("#res").val(t);
+                        return;
+                    }
+                    for(v of obj.data)
+                        t += v.soctype + "\t\t\t\t" + v.relation + "\t\t\t\t" + v.name + "\r\n";
+                    $("#res").val(t);
+                });
+            }
+            
+			function GetSocTypes(){
+				SendRequest("GetSocTypes", "", function(data){
+					obj = JSON.parse(data);
+					res = "";
+					for(i=0;i<obj.data.length;i++){
+						res += obj.data[i].id + ": " + obj.data[i].name + "\r\n";
+					}
+					$("#res").val(res);
+				});
+			}
+			
+            function LogOut() {
+                SendRequest("Logout", "", function(data){
+                    //$("#res").val(data);
+                    obj = JSON.parse(data);
+                    $("#res").val("Code: " + obj.code + "\r\nMessage: " + obj.msg);
+                    $("#phpsesid").val();
+                });
+            }
+            
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid center-block" style="padding-top: 55px">
+            <div class="jumbotron">
+                <h1>Описание</h1>
+                <h2>Пример запроса</h2>
+                {<br/>
+                    &nbsp;"command":"LogIn",<br/>
+                    &nbsp;"data":<br/>
+                    &nbsp;{<br/>
+                        &nbsp;&nbsp;"login":"Stoneface",<br/>
+                        &nbsp;&nbsp;"password":"Stoneface"<br/>
+                    &nbsp;}<br/>
+                }<br/>
+                Поле "command" - это текстовая команда, которую должен выполнить сервер. Регистр букв игнорируеться.
+                Поле "data" - это объект или массив, который содержит необходимую для выполнения запроса информацию,
+                    если выполнение запроса не требует дополнительной информации, то поле должно должно быть равно пустой строке (ОБЕЗАТЕЛЬНО!)
+                <h2>Пример ответа</h2>
+                {<br/>
+                    &nbsp;"code":200,<br/>
+                    &nbsp;"msg":"OK",<br/>
+                    &nbsp;"data":"b680e0aa4931ee34fabfee536ace7659"<br/>
+                }<br/>
+                "code" - код ответа.<br/>
+                "msg" - сообщение об успехе/ошибке. Зависит от кода отвта.<br/>
+                "data" - данные, которые были затребованы. Это может быть массив, объект или строка.<br/>
+                <h2>Список допустимых команд</h2>
+                <h3>LogIn</h3>
+                <h4>Запрос</h4>
+                data: {"login": "login", "password": "password"}<br/>
+                <h4>Ответ</h4>
+                data: "0123456789abcdef0123456789abcdef"<br/>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    Текст из data должен быть сохранён.
+                </div>
+                <h3>LogOut</h3>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    Нужен phpsesid.
+                </div>
+                <h4>Запрос</h4>
+                data: ""<br/>
+				phpsesid: "0123456789abcdef0123456789abcdef"<br/>
+                <h4>Ответ</h4>
+                data: ""<br/>
+                <h3>CheckLogin</h3>
+                Проверка занят ли логин
+                <h4>Запрос</h4>
+                data: "login"<br/>
+                <h4>Ответ</h4>
+                Если логин занят<br/>
+                data: "1"<br/>
+                Иначе<br/>
+                data: "0"<br/>
+                <h3>Registration</h3>
+                <h4>Запрос</h4>
+                data: {"login": "login", "password": "password", "soctype": "0"}<br/>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    soctype - это айди той штуки, правильное название которой я не помню, но которая выбирается при регистрации из выпадающего списка.<br/>
+                    Айди можно узнать выполнив команду 'GetSocTypes'.
+                </div>
+                <h4>Ответ</h4>
+                data: ""<br/>
+                Об успехе выполнения команды можно судить по коду ("code").<br/>
+                <h3>GetSocTypes</h3>
+                <h4>Запрос</h4>
+                data: ""<br/>
+                <h4>Ответ</h4>
+                data: [{"id": "0", "name": "Soctype1"}, {"id": "1", "name": "Soctype2"}]<br/>
+                <h3>GetFriends</h3>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    Нужен phpsesid.
+                </div>
+                <h4>Запрос</h4>
+                data: ""<br/>
+				phpsesid: "0123456789abcdef0123456789abcdef"<br/>
+                <h4>Ответ</h4>
+                data: [{"name": "Hugh Darrow", "soctype": "SOCTYPE0", "relation": "Buzinga"}, {"name": "Eliza Cassan", "soctype": "SOCTYPE1", "relation": "Buzinga"}]<br/>
+                <h3>AddFriend</h3>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    Нужен phpsesid.
+                </div>
+                <h4>Запрос</h4>
+                data: {"name":"friend", "soctype": "0"}<br/>
+				phpsesid: "0123456789abcdef0123456789abcdef"<br/>
+                <h4>Ответ</h4>
+                data: ""<br/>
+                Об успехе выполнения команды можно судить по коду ("code").<br/>
+				<h3>DeleteFriend</h3>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    Нужен phpsesid.
+                </div>
+				Удаляет друзей с именем как в data
+                <h4>Запрос</h4>
+                data: "name"<br/>
+				phpsesid: "0123456789abcdef0123456789abcdef"<br/>
+                <h4>Ответ</h4>
+                data: ""<br/>
+                Об успехе выполнения команды можно судить по коду ("code").<br/>
+				<h3>Info</h3>
+                <div class="alert alert-warning" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Warning:</span>
+                    Нужен phpsesid.
+                </div>
+                <h4>Запрос</h4>
+                data: ""<br/>
+				phpsesid: "0123456789abcdef0123456789abcdef"<br/>
+                <h4>Ответ</h4>
+                data: {"login":"Stoneface","soctype":"Дюма"}<br/>
+                <br/>
+				<br/>
+                <a href="https://github.com/Stonefacer/SatanaDev.git">Исходный код</a>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">Command</span>
+                <input id="cmd" type="text" class="form-control" placeholder="Command" aria-describedby="basic-addon1" value="LogIn">
+            </div>
+            <br/>
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon2">Data</span>
+                <input id="data" type="text" class="form-control" placeholder="Data" aria-describedby="basic-addon1" value='{"login": "Stoneface", "password": "Stoneface"}'>
+            </div>
+            <br/>
+			<div class="input-group">
+                <span class="input-group-addon" id="basic-addon2">PHPSESID</span>
+                <input id="phpsesid" type="text" class="form-control" placeholder="PHPSESID" aria-describedby="basic-addon1" value=''>
+            </div>
+            <br/>
+            <button type="button" class="btn btn-default" onclick="SendCustomRequest()">Send request</button>
+            <br/>
+            <br/>
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-default" onclick="LogIn()">Login</button>
+                <button type="button" class="btn btn-default" onclick="GetFriends()">GetFriends</button>
+                <button type="button" class="btn btn-default" onclick="LogOut()">Logout</button>
+				<button type="button" class="btn btn-default" onclick="GetSocTypes()">GetSocTypes</button>
+            </div>
+            <br/>
+            <br/>
+            <textarea id="res" style="width:100%;height: auto;" rows="10" placeholder="Response" required></textarea>
+            <br/>
+        </div>
+    </body>
+</html>

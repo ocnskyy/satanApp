@@ -1,5 +1,5 @@
 node_modules
 lib
-.gitignore
+#.gitignore
 #gulpfile.js
-package.json
+#package.json

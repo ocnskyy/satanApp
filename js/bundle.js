@@ -1,9 +1,9 @@
-'use strict'
+﻿'use strict'
 var satanApp = angular.module('satanApp', ['ui.router']);
 
 satanApp.factory('myService', function($http) {
     //var url = 'http://grue.esy.es/pingpong.php';
-    var url = "http://grup/backend/pingpong.php"; 
+    var url = "../backend/pingpong.php"; 
 
     var checkLogin = function(login) {
     	return $http.post(url, {"command": "CheckLogin","data": login})

@@ -1,9 +1,9 @@
-﻿'use strict'
+'use strict'
 var satanApp = angular.module('satanApp', ['ui.router']);
 
 satanApp.factory('myService', function($http) {
     //var url = 'http://grue.esy.es/pingpong.php';
-    var url = "../backend/pingpong.php"; 
+    var url = "http://grup/backend/pingpong.php"; 
 
     var checkLogin = function(login) {
     	return $http.post(url, {"command": "CheckLogin","data": login})
@@ -134,6 +134,21 @@ satanApp.factory('myService', function($http) {
         };
 });
 
+satanApp.service('shareId', function() {
+    var stringValue = '';
+    return {
+        getString: function() {
+            return stringValue;
+        },
+        setString: function(value) {
+            stringValue = value;
+        },
+        getRandomImage: function() {
+			return 'app/img/' + Math.floor((Math.random()*6)+1) + '.jpg';
+        }
+    }
+});
+
 satanApp.controller('MainController', ['$scope', '$http', '$state', 'myService',function($scope, $http, $state, myService){
 	console.log('Its MainController');
 	//$scope.superId = 'c97618cdb5adcb6f00de7fc9bd5faa8c'; 
@@ -234,7 +249,9 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 	$scope.goToLogin 		= function() {$state.go('login');};
 	$scope.goToRegistration	= function() {$state.go('registration');};
 	$scope.goHome = function() {$state.go('home');};
-	$scope.helloImage = myService.getRandomImage();
+	// $scope.helloImage = myService.getRandomImage();
+	$scope.backgroundStyle = myService.getRandomImage();
+	console.log($scope.backgroundStyle);
 
 	$scope.regData = {};
 	$scope.socTypes = {};
@@ -280,8 +297,9 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 			alert('Пароли не совпадют!');
 	};
 }]);
+
 satanApp.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
-	
+
 	$urlRouterProvider.otherwise("/home");
 	//$locationProvider.html5Mode(true);
 

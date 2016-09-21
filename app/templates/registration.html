@@ -2,9 +2,9 @@
 	<a ng-click="goHome()" title=""><h1>SOCIONIC TREE</h1></a>
 </div>
 <div class="row" style="margin-left:0px !important;margin-right:0px !important;">
-	<div class="col-md-12 header-image">
+	<!-- <div class="col-md-12 header-image">
 		<img src="app/img/cool2.jpg" alt="sorry" class="img-responsive">
-	</div>
+	</div> -->
 
 	<div class="col-md-12">
 		<div class="registration">
@@ -17,7 +17,7 @@
 			<div class="input-group">
 			 	<input type="password" class="form-control" placeholder="Повторите пароль" aria-describedby="basic-addon1" ng-model="regData.password2">
 			</div>
-			
+
 			<div class="input-group">
 				<select ng-model="regData.soctype" ng-options="type.id as type.name for type in socTypes.data" class="form-control">
 					<option value="" disabled selected>Социотип</option>
@@ -27,7 +27,7 @@
 				    <option ng-repeat="type in socTypes.data" ng-model="regData.soctype">{{type.name}}</option>
 				</select>-->
 			</div>
-			
+
 			<div class="input-group">
 				<button class="btn btn-default" ng-click="registration()" style="margin-top: 25px; width: 150px;">РЕГИСТРАЦИЯ</button>
 			</div>
@@ -35,4 +35,3 @@
 		</div>
 	</div>
 </div>
-	

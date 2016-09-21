@@ -3,7 +3,9 @@ satanApp.controller('LoginController', ['$scope', '$http', 'myService', '$state'
 	$scope.goToLogin 		= function() {$state.go('login');};
 	$scope.goToRegistration	= function() {$state.go('registration');};
 	$scope.goHome = function() {$state.go('home');};
-	$scope.helloImage = myService.getRandomImage();
+	// $scope.helloImage = myService.getRandomImage();
+	$scope.backgroundStyle = myService.getRandomImage();
+	console.log($scope.backgroundStyle);
 
 	$scope.regData = {};
 	$scope.socTypes = {};
